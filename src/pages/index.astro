@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { pb } from '../lib/pocketbase';
+
+const products = await pb.collection('products').getList(1, 12, {
+  sort: '-created',
+  filter: 'stock > 0'
+});
+---
+
+<Layout title="Fashion Store | Home">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Latest Products</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {products.items.map((product) => (
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <img 
+            src={pb.getFileUrl(product, product.image)} 
+            alt={product.name}
+            class="w-full h-64 object-cover"
+          />
+          <div class="p-4">
+            <h2 class="text-xl font-semibold text-gray-800">{product.name}</h2>
+            <p class="text-gray-600 mt-2">{product.description}</p>
+            <div class="mt-4 flex justify-between items-center">
+              <span class="text-xl font-bold text-gray-900">KSH {product.price}</span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                data-product-id={product.id}
+                onclick="addToCart(this.dataset.productId)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<script>
+function addToCart(productId) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.push(productId);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert('Product added to cart!');
+}
+</script>

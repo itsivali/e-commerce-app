@@ -1,0 +1,40 @@
+---
+import type { Product } from '../lib/pocketbase';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <img 
+    src={product.image} 
+    alt={product.name}
+    class="w-full h-64 object-cover"
+  />
+  <div class="p-4">
+    <h3 class="text-lg font-semibold">{product.name}</h3>
+    <p class="text-gray-600 mt-1">{product.description}</p>
+    <div class="mt-4 flex justify-between items-center">
+      <span class="text-xl font-bold">KSH {product.price}</span>
+      <button
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        data-product-id={product.id}
+        onclick="addToCart(this.dataset.productId)"
+      >
+        Add to Cart
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function addToCart(productId: string) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.push(productId);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  window.dispatchEvent(new CustomEvent('cart-updated'));
+}
+</script>
