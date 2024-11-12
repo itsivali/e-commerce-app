@@ -3,6 +3,7 @@ import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import auth from 'auth-astro';
 import node from '@astrojs/node';
+import { onRequest } from './src/middleware'; // Import middleware from the correct file
 
 export default defineConfig({
   integrations: [
@@ -47,5 +48,9 @@ export default defineConfig({
   output: 'server',
   adapter: node({
     mode: 'standalone'
-  })
+  }),
+  
+  server: {
+    middleware: [onRequest], 
+  }
 });
