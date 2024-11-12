@@ -3,7 +3,7 @@ import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import auth from 'auth-astro';
 import node from '@astrojs/node';
-import { onRequest } from './src/middleware'; // Import middleware from the correct file
+import { onRequest } from './src/middleware'; // Import middleware function
 
 export default defineConfig({
   integrations: [
@@ -20,7 +20,6 @@ export default defineConfig({
           },
           async authorize(credentials) {
             // Implement your authentication logic here
-            // For example, verify against PocketBase
             try {
               const pb = new PocketBase(import.meta.env.POCKETBASE_URL);
               const authData = await pb.collection('users').authWithPassword(
@@ -47,10 +46,9 @@ export default defineConfig({
   ],
   output: 'server',
   adapter: node({
-    mode: 'standalone'
-  }),
-  
-  server: {
-    middleware: [onRequest], 
-  }
+    mode: 'standalone',
+      server: {
+      middleware: [onRequest] 
+    }
+  })
 });
